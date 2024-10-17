@@ -1,0 +1,3 @@
+topic: "Devopsapp"
+mergeRequestsSettings.mergeMethod: "fast_forward"
+mergeRequestsSettings.onlyAllowMergeIfPipelineSucceeds: true
