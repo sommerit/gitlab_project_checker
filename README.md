@@ -18,6 +18,7 @@ Run the script with Python:
 
 ```sh
 python gitlab_project_checker.py
+```bash
 === Projects Skipped ===
 - demo (kfw1/not-me/demo)
 --------------------------------------------------
