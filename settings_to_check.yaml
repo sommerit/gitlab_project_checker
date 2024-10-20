@@ -1,3 +1,20 @@
-topic: "Devopsapp"
-mergeRequestsSettings.mergeMethod: "fast_forward"
-mergeRequestsSettings.onlyAllowMergeIfPipelineSucceeds: true
+general:
+  topics: "Devopsapp"
+  exclude:
+    - "kfw1/not-me/"
+
+query:
+  mergeRequestsDisableCommittersApproval: false
+  onlyAllowMergeIfPipelineSucceeds: true
+  branchRules.nodes.name: ["DEV*", "main"]
+  branchRules.nodes.isDefault: [false,true]
+
+#branchRules:
+#  nodes:
+#    - name: "main"
+#      isProtected: true
+#      isDefault: true
+#    - name: "DEV*"
+#      isProtected: true
+#      isDefault: false
+
