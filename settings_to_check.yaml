@@ -1,7 +1,7 @@
 general:
   topics: "Devopsapp"
   exclude:
-    - "kfw1/not-me/"
+    - "/not-me/"
 
 query:
   mergeRequestsDisableCommittersApproval: false
