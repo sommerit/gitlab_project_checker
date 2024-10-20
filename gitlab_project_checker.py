@@ -68,7 +68,8 @@ def get_projects(query):
     }
     response = requests.post(GITLAB_API_URL, headers=headers, json={"query": query})
 
-    logging.info(f"Executing query: {query}")
+    if __name__ == "__main__" and '--debug' in os.sys.argv:
+        logging.info(f"Executing query: {query}")
 
     if response.status_code == 200:
         return response.json()
@@ -98,12 +99,16 @@ def check_project_settings():
         after_cursor = page_info.get("endCursor")
 
     query_settings = settings_to_check.get("query", {})
+    correct_projects = []
+    incorrect_projects = []
+    skipped_projects = []
+
     for project in all_projects:
         project_name = project["name"]
         project_path = project.get("fullPath", "")
 
         if any(project_path.startswith(excluded_path) for excluded_path in excluded_paths):
-            logging.info(f"Skipping project '{project_name}' under excluded path '{project_path}'")
+            skipped_projects.append((project_name, project_path))
             continue
 
         errors = []
@@ -133,13 +138,39 @@ def check_project_settings():
                 if value is None:
                     break
             if value != expected_value:
-                errors.append(f"Setting '{setting}' is '{value}', expected '{expected_value}'")
+                errors.append(f"Setting '{setting}' is '{colored(value, 'cyan')}', expected '{colored(expected_value, 'yellow')}'")
 
         if errors:
-            print(colored(f"Project '{project_name}' has incorrect settings:\n" + "\n".join(errors), 'light_red'))
+            incorrect_projects.append((project_name, errors))
         else:
-            print(colored(f"Project '{project_name}' has all correct settings.", 'green'))
-        print("-" * 50)
+            correct_projects.append(project_name)
+
+    if skipped_projects:
+        print(colored("\n=== Projects Skipped ===", 'yellow'))
+        for project_name, project_path in skipped_projects:
+            print(colored(f"- {project_name} ({project_path})", 'yellow'))
+    print("-" * 50)
+
+    print(colored("\n=== Summary ===", 'magenta'))
+    print(colored(f"Total Projects Checked: {len(all_projects)}", 'cyan'))
+    print(colored(f"Projects with Correct Settings: {len(correct_projects)}", 'green'))
+    print(colored(f"Projects with Incorrect Settings: {len(incorrect_projects)}", 'red'))
+    print(colored(f"Projects Skipped: {len(skipped_projects)}", 'yellow'))
+    print("-" * 50)
+
+    if correct_projects:
+        print(colored("\n=== Projects with Correct Settings ===", 'green'))
+        for project_name in correct_projects:
+            print(colored(f"- {project_name}", 'green'))
+    print("-" * 50)
+
+    if incorrect_projects:
+        print(colored("\n=== Projects with Incorrect Settings ===", 'red'))
+        for project_name, errors in incorrect_projects:
+            print(colored(f"- {project_name}", 'red'))
+            for error in errors:
+                print(f"  {error}")
+    print("-" * 50)
 
 if __name__ == "__main__":
     if not GITLAB_ACCESS_TOKEN:

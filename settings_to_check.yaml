@@ -6,7 +6,7 @@ general:
 query:
   mergeRequestsDisableCommittersApproval: false
   onlyAllowMergeIfPipelineSucceeds: true
-  branchRules.nodes.name: ["DEV*", "main"]
+  branchRules.nodes.name: ["DEV*", "main", "RC*"]
   branchRules.nodes.isDefault: [false,true]
 
 #branchRules:
