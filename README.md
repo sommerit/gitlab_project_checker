@@ -2,18 +2,42 @@
 
 This script checks GitLab projects with a specific topic for certain settings using the GitLab GraphQL API. You can configure the settings to be checked in a YAML file.
 
-## Requirements
+# Project Settings Checker
 
-- Python 3
-- Required Python packages: `requests`, `pyyaml`
-- A GitLab Personal Access Token with access to the projects you want to check
+This script is designed to check GitLab project settings to ensure they match a desired configuration. It uses GitLab's GraphQL API to query the settings of projects and compares them against expected values defined in a YAML configuration file.
 
-## Installation
+## Features
+- Retrieves project information from GitLab using GraphQL.
+- Compares project settings with the desired values specified in a YAML file (`settings_to_check.yaml`).
+- Skips projects from specified groups or paths.
+- Provides a summary of projects with correct and incorrect settings, as well as skipped projects.
+- Debug mode available with `--debug` to display query execution.
 
-1. Clone the repository or copy the script to your local machine.
-2. Install the required Python packages:
-   ```sh
-   pip install requests pyyaml
+## Usage
+Run the script with Python:
+
+```sh
+python gitlab_project_checker.py
+=== Projects Skipped ===
+- demo (kfw1/not-me/demo)
+--------------------------------------------------
+
+=== Summary ===
+Total Projects Checked: 3
+Projects with Correct Settings: 0
+Projects with Incorrect Settings: 2
+Projects Skipped: 1
+--------------------------------------------------
+--------------------------------------------------
+
+=== Projects with Incorrect Settings ===
+- ci-backend
+  Setting 'onlyAllowMergeIfPipelineSucceeds' is 'False', expected 'True'
+  Setting 'branchRules.nodes.name' is 'main', expected '['DEV*', 'main', 'RC*']'
+  Setting 'branchRules.nodes.isDefault' is 'True', expected '[False, True]'
+- ci-frontend
+  Setting 'branchRules.nodes.name' is '['DEV*', 'main']', expected '['DEV*', 'main', 'RC*']'
+--------------------------------------------------
 
 ## Possible GraphQL Settings
 
